@@ -59,7 +59,6 @@ public class SetAlarm extends PreferenceActivity implements Preference.OnPrefere
     private AlarmPreference mAlarmPref;
     private CheckBoxPreference mVibratePref;
     private CheckBoxPreference mIncVolPref;
-    private ProfilePreference mProfilePref;
     private RepeatPreference mRepeatPref;
 
     private int     mId;
@@ -98,9 +97,6 @@ public class SetAlarm extends PreferenceActivity implements Preference.OnPrefere
         }
         mIncVolPref = (CheckBoxPreference) findPreference("incvol");
         mIncVolPref.setOnPreferenceChangeListener(this);
-        mProfilePref = (ProfilePreference) findPreference("profile");
-        mProfilePref.setOnPreferenceChangeListener(this);
-        updateProfilesStatus();
         mRepeatPref = (RepeatPreference) findPreference("setRepeat");
         mRepeatPref.setOnPreferenceChangeListener(this);
 
@@ -178,13 +174,7 @@ public class SetAlarm extends PreferenceActivity implements Preference.OnPrefere
             }
         }
     }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        updateProfilesStatus();
-    }
-
+    
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.menu_delete) {
@@ -265,8 +255,6 @@ public class SetAlarm extends PreferenceActivity implements Preference.OnPrefere
         mIncVolPref.setChecked(alarm.incvol);
         // Give the alert uri to the preference.
         mAlarmPref.setAlert(alarm.alert);
-        // Give the profile to the preference
-        mProfilePref.setProfile(alarm.profile);
         updateTime();
     }
 
@@ -351,7 +339,6 @@ public class SetAlarm extends PreferenceActivity implements Preference.OnPrefere
         alarm.label = mLabel.getText().toString();
         alarm.alert = mAlarmPref.getAlert();
         alarm.incvol = mIncVolPref.isChecked();
-        alarm.profile = mProfilePref.getProfile();
         return alarm;
     }
 
@@ -448,12 +435,5 @@ public class SetAlarm extends PreferenceActivity implements Preference.OnPrefere
 
         String[] formats = context.getResources().getStringArray(R.array.alarm_set);
         return String.format(formats[index], daySeq, hourSeq, minSeq);
-    }
-
-    private void updateProfilesStatus() {
-        boolean isProfilesEnabled =
-                Settings.System.getInt(getContentResolver(),
-                        Settings.System.SYSTEM_PROFILES_ENABLED, 1) == 1;
-        mProfilePref.setEnabled(isProfilesEnabled);
     }
 }
